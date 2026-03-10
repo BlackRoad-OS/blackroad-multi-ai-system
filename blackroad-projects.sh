@@ -4,6 +4,8 @@
 # Full project lifecycle: planning, sprints, milestones, dependencies, resources
 
 MEMORY_DIR="$HOME/.blackroad/memory"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+MEMORY_SYSTEM="${MEMORY_SYSTEM:-${SCRIPT_DIR}/memory-system.sh}"
 PROJECTS_DIR="$MEMORY_DIR/projects"
 
 # Colors
@@ -69,7 +71,7 @@ create_project() {
 EOF
     
     # Log to memory
-    ~/memory-system.sh log project-created "$project_id" "🚀 Project created: $project_name (owner: $owner)" 2>/dev/null
+    "$MEMORY_SYSTEM" log project-created "$project_id" "🚀 Project created: $project_name (owner: $owner)" 2>/dev/null
     
     echo -e "${GREEN}✅ Project created:${NC} ${BOLD}${CYAN}$project_id${NC}"
     echo -e "   ${BLUE}Name:${NC} $project_name"

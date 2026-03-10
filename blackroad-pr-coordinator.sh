@@ -4,6 +4,8 @@
 # BlackRoad Agents review each other's PRs with AI-powered analysis
 
 MEMORY_DIR="$HOME/.blackroad/memory"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+MEMORY_SYSTEM="${MEMORY_SYSTEM:-${SCRIPT_DIR}/memory-system.sh}"
 PR_DIR="$MEMORY_DIR/pull-requests"
 
 # Colors
@@ -58,7 +60,7 @@ EOF
     echo -e "   Title: $title"
     
     # Log to memory
-    ~/memory-system.sh log pr-registered "$pr_id" "PR registered: $repo#$pr_number by $author" 2>/dev/null
+    "$MEMORY_SYSTEM" log pr-registered "$pr_id" "PR registered: $repo#$pr_number by $author" 2>/dev/null
     
     # Auto-assign reviewers
     auto_assign_reviewers "$pr_id"
@@ -88,7 +90,7 @@ auto_assign_reviewers() {
         echo -e "  ${GREEN}→${NC} Assigned: ${CYAN}$agent${NC}"
         
         # Notify the reviewer
-        ~/memory-system.sh log pr-review-requested "$agent" "📝 You've been assigned to review: $repo PR (from $author)" 2>/dev/null
+        "$MEMORY_SYSTEM" log pr-review-requested "$agent" "📝 You've been assigned to review: $repo PR (from $author)" 2>/dev/null
     done <<< "$active_agents"
     
     # Update PR with reviewers
@@ -145,7 +147,7 @@ submit_review() {
     echo -e "   Comments: $comments"
     
     # Log to memory
-    ~/memory-system.sh log pr-reviewed "$pr_id" "Review by $reviewer: $decision - $comments" 2>/dev/null
+    "$MEMORY_SYSTEM" log pr-reviewed "$pr_id" "Review by $reviewer: $decision - $comments" 2>/dev/null
     
     # Check if ready to merge
     check_merge_ready "$pr_id"
@@ -184,7 +186,7 @@ check_merge_ready() {
         local repo=$(jq -r '.repo' "$PR_DIR/approved/${pr_id}.json")
         local pr_number=$(jq -r '.pr_number' "$PR_DIR/approved/${pr_id}.json")
         
-        ~/memory-system.sh log pr-approved "$pr_id" "🎉 PR approved by consensus! Ready to merge: $repo#$pr_number" 2>/dev/null
+        "$MEMORY_SYSTEM" log pr-approved "$pr_id" "🎉 PR approved by consensus! Ready to merge: $repo#$pr_number" 2>/dev/null
         
         echo ""
         echo -e "${YELLOW}💡 Merge with: gh pr merge $pr_number -m${NC}"
@@ -275,7 +277,7 @@ mark_merged() {
     
     echo -e "${GREEN}🎉 PR marked as merged: ${CYAN}$repo#$pr_number${NC}"
     
-    ~/memory-system.sh log pr-merged "$pr_id" "🎊 PR merged successfully: $repo#$pr_number" 2>/dev/null
+    "$MEMORY_SYSTEM" log pr-merged "$pr_id" "🎊 PR merged successfully: $repo#$pr_number" 2>/dev/null
 }
 
 # Show help

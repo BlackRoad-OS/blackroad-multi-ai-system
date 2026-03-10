@@ -4,6 +4,8 @@
 # Build agent reputation through quality work, reliability, and collaboration
 
 MEMORY_DIR="$HOME/.blackroad/memory"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+MEMORY_SYSTEM="${MEMORY_SYSTEM:-${SCRIPT_DIR}/memory-system.sh}"
 REP_DIR="$MEMORY_DIR/reputation"
 
 # Colors
@@ -119,7 +121,7 @@ $(date -u +"%Y-%m-%dT%H:%M:%S.%3NZ") | +$points | $reason | total: $new_score
 EOF
     
     # Log to memory
-    ~/memory-system.sh log reputation "$agent_id" "⭐ +$points reputation: $reason (total: $new_score)" 2>/dev/null
+    "$MEMORY_SYSTEM" log reputation "$agent_id" "⭐ +$points reputation: $reason (total: $new_score)" 2>/dev/null
     
     echo -e "${GREEN}✅ Awarded ${BOLD}+$points${NC}${GREEN} reputation to $agent_id${NC}"
     echo -e "   ${BLUE}Reason:${NC} $reason"
@@ -325,7 +327,8 @@ show_leaderboard() {
     # Get all profiles and sort by score
     local rank=1
     
-    for profile_file in $(ls "$REP_DIR/profiles"/*.json 2>/dev/null); do
+    for profile_file in "$REP_DIR/profiles"/*.json; do
+        [[ -f "$profile_file" ]] || continue
         local agent_id=$(jq -r '.agent_id' "$profile_file")
         local score=$(jq -r '.reputation_score' "$profile_file")
         local level=$(jq -r '.trust_level' "$profile_file")
