@@ -5,6 +5,8 @@
 # Perfect for deployment gates, PR approvals, and quality checks
 
 MEMORY_DIR="$HOME/.blackroad/memory"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+MEMORY_SYSTEM="${MEMORY_SYSTEM:-${SCRIPT_DIR}/memory-system.sh}"
 LIGHTS_DIR="$MEMORY_DIR/traffic-lights"
 
 # Colors
@@ -85,7 +87,7 @@ $timestamp | $color | $reason | $set_by
 EOF
     
     # Log to memory
-    ~/memory-system.sh log "traffic-light-${color}" "$entity" "🚦 $(echo "$color" | tr a-z A-Z): $reason (by $set_by)" 2>/dev/null
+    "$MEMORY_SYSTEM" log "traffic-light-${color}" "$entity" "🚦 $(echo "$color" | tr a-z A-Z): $reason (by $set_by)" 2>/dev/null
     
     # Show confirmation with appropriate color
     case "$color" in

@@ -4,6 +4,8 @@
 # Subscribe to events and get notified when dependencies complete!
 
 MEMORY_DIR="$HOME/.blackroad/memory"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+MEMORY_SYSTEM="${MEMORY_SYSTEM:-${SCRIPT_DIR}/memory-system.sh}"
 DEPS_DIR="$MEMORY_DIR/dependencies"
 SUBS_DIR="$DEPS_DIR/subscriptions"
 EVENTS_DIR="$DEPS_DIR/events"
@@ -48,7 +50,7 @@ subscribe() {
 }
 EOF
 
-    ~/memory-system.sh log subscribed "$subscriber" "🔔 Subscribed to: $event_name (notify on: $notify_when)"
+    "$MEMORY_SYSTEM" log subscribed "$subscriber" "🔔 Subscribed to: $event_name (notify on: $notify_when)"
 
     echo -e "${GREEN}✅ Subscribed to: ${CYAN}$event_name${NC}"
     echo -e "   ${BLUE}Subscriber:${NC} $subscriber"
@@ -70,7 +72,7 @@ unsubscribe() {
 
     rm "$sub_file"
 
-    ~/memory-system.sh log unsubscribed "$subscriber" "🔕 Unsubscribed from: $event_name"
+    "$MEMORY_SYSTEM" log unsubscribed "$subscriber" "🔕 Unsubscribed from: $event_name"
 
     echo -e "${GREEN}✅ Unsubscribed from: ${CYAN}$event_name${NC}"
 }
@@ -113,14 +115,14 @@ EOF
         # Check if this status matches what subscriber wants
         if [[ "$notify_when" == "$status" || "$notify_when" == "any" ]]; then
             # Send notification via memory system
-            ~/memory-system.sh log notification "$subscriber" "🔔 DEPENDENCY READY: $event_name is now $status! Details: $details (Published by: $publisher)"
+            "$MEMORY_SYSTEM" log notification "$subscriber" "🔔 DEPENDENCY READY: $event_name is now $status! Details: $details (Published by: $publisher)"
 
             echo -e "${GREEN}📬 Notified: ${CYAN}$subscriber${NC}"
             ((notification_count++))
         fi
     done
 
-    ~/memory-system.sh log event-published "$event_name" "📢 Event published: $status (Notified: $notification_count subscribers)"
+    "$MEMORY_SYSTEM" log event-published "$event_name" "📢 Event published: $status (Notified: $notification_count subscribers)"
 
     echo -e "${GREEN}✅ Event published: ${CYAN}$event_name${NC}"
     echo -e "   ${BLUE}Status:${NC} $status"

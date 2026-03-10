@@ -4,6 +4,8 @@
 # Share discoveries, learnings, and insights across all BlackRoad Agents!
 
 MEMORY_DIR="$HOME/.blackroad/memory"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+MEMORY_SYSTEM="${MEMORY_SYSTEM:-${SCRIPT_DIR}/memory-system.sh}"
 TIL_DIR="$MEMORY_DIR/til"
 
 # Colors
@@ -50,7 +52,7 @@ broadcast() {
 EOF
 
     # Log to memory system
-    ~/memory-system.sh log til "$broadcaster" "💡 TIL [$category]: $learning"
+    "$MEMORY_SYSTEM" log til "$broadcaster" "💡 TIL [$category]: $learning"
 
     # Show confirmation
     local icon="💡"

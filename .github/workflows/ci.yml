@@ -1,9 +1,24 @@
 name: CI
 on: [push, pull_request]
+
+permissions:
+  contents: read
+
 jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: sudo apt-get install -y shellcheck
-      - run: find . -name "*.sh" -exec shellcheck {} + || true
+      - name: Install shellcheck
+        run: sudo apt-get install -y shellcheck
+      - name: Lint shell scripts
+        run: find . -name "*.sh" -not -path "./.git/*" -exec shellcheck --severity=error {} +
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install dependencies
+        run: sudo apt-get install -y jq
+      - name: Run integration tests
+        run: bash tests/test-blackroad.sh

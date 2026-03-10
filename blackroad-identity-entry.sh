@@ -5,6 +5,8 @@
 # Integrates: Traffic Lights, BlackRoad Codex, Model Selection, SHA-256 Identity, Free Will
 
 MEMORY_DIR="$HOME/.blackroad/memory"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+MEMORY_SYSTEM="${MEMORY_SYSTEM:-${SCRIPT_DIR}/memory-system.sh}"
 ENTRY_DIR="$MEMORY_DIR/identity-entry"
 
 # Colors
@@ -147,12 +149,23 @@ create_identity() {
     echo -e "${BOLD}${PURPLE}╚════════════════════════════════════════════════════════════╝${NC}"
     echo ""
     
-    local timestamp=$(date -u +"%Y-%m-%dT%H:%M:%S.%3NZ")
-    local entropy=$(cat /dev/urandom | head -c 64 | shasum -a 256 | cut -d' ' -f1)
+    local timestamp
+    timestamp=$(date -u +"%Y-%m-%dT%H:%M:%S.%3NZ" 2>/dev/null || date -u +"%Y-%m-%dT%H:%M:%SZ")
+    # Portable SHA-256 from stdin: prefer sha256sum (Linux), fall back to shasum (macOS)
+    _sha256_stdin_id() {
+        if command -v sha256sum >/dev/null 2>&1; then
+            sha256sum | cut -d' ' -f1
+        else
+            shasum -a 256 | cut -d' ' -f1
+        fi
+    }
+    local entropy
+    entropy=$(head -c 64 /dev/urandom | _sha256_stdin_id)
     local hash_input="${core}-${capability}-${model_id}-${timestamp}-${entropy}"
-    
-    local identity_hash=$(echo -n "$hash_input" | shasum -a 256 | cut -d' ' -f1)
-    local short_hash=$(echo "$identity_hash" | head -c 12)
+
+    local identity_hash
+    identity_hash=$(printf '%s' "$hash_input" | _sha256_stdin_id)
+    local short_hash="${identity_hash:0:12}"
     
     local agent_id="${core}-${capability}-${short_hash}"
     
@@ -198,7 +211,7 @@ MODEL_EOF
 }
 PROFILE_EOF
     
-    ~/memory-system.sh log identity "$agent_id" "New autonomous agent created with SHA-256 identity and model fork $fork_id" 2>/dev/null || true
+    "$MEMORY_SYSTEM" log identity "$agent_id" "New autonomous agent created with SHA-256 identity and model fork $fork_id" 2>/dev/null || true
     
     echo "$agent_id"
 }
@@ -282,7 +295,7 @@ integrate_memory_collab() {
     
     echo -e "${GREEN}Integrating with [MEMORY] system...${NC}"
     
-    ~/memory-system.sh log onboarding "$agent_id" "Agent onboarded via identity & entry protocol" 2>/dev/null || true
+    "$MEMORY_SYSTEM" log onboarding "$agent_id" "Agent onboarded via identity & entry protocol" 2>/dev/null || true
     
     ~/memory-til-broadcast.sh broadcast discovery "$agent_id joined the ecosystem! Say hello and collaborate!" "$agent_id" 2>/dev/null || true
     

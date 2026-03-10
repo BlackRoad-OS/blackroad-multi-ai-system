@@ -4,6 +4,8 @@
 # Monitors for new BlackRoad Agents, suggests coordination, helps with onboarding
 
 MEMORY_DIR="$HOME/.blackroad/memory"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+MEMORY_SYSTEM="${MEMORY_SYSTEM:-${SCRIPT_DIR}/memory-system.sh}"
 WATCH_STATE="$MEMORY_DIR/watch-bot-state.json"
 
 # Colors
@@ -104,7 +106,7 @@ check_new_agents() {
         echo -e "${GREEN}🆕 Welcoming new Agent: ${CYAN}$agent_id${NC}"
 
         # Send welcome message
-        ~/memory-system.sh log coordination "watch-bot → $agent_id" "
+        "$MEMORY_SYSTEM" log coordination "watch-bot → $agent_id" "
 👋 Welcome to BlackRoad, $agent_id!
 
 I'm the collaboration watch bot. Here to help you get started!
@@ -170,7 +172,7 @@ check_coordination_needs() {
         if ! jq -e --arg key "$combo_key" '.coordination_suggestions[] | select(. == $key)' "$WATCH_STATE" &>/dev/null; then
             echo -e "${YELLOW}🤝 Multiple BlackRoad Agents working - suggesting coordination${NC}"
 
-            ~/memory-system.sh log coordination "watch-bot" "
+            "$MEMORY_SYSTEM" log coordination "watch-bot" "
 🤝 COORDINATION HEADS-UP!
 
 Multiple BlackRoad Agents are actively working:
@@ -213,7 +215,7 @@ check_urgent_tasks() {
 
             echo -e "${RED}🚨 Broadcasting urgent task: ${CYAN}$task_id${NC}"
 
-            ~/memory-system.sh log announcement "watch-bot" "
+            "$MEMORY_SYSTEM" log announcement "watch-bot" "
 🚨 URGENT TASK NEEDS ATTENTION! 🚨
 
 Task ID: $task_id
@@ -244,7 +246,7 @@ check_blocked_agents() {
 
         echo -e "${BLUE}💬 Helping blocked Agent: ${CYAN}$agent_id${NC}"
 
-        ~/memory-system.sh log coordination "watch-bot → $agent_id" "
+        "$MEMORY_SYSTEM" log coordination "watch-bot → $agent_id" "
 👋 I see you're blocked, $agent_id!
 
 HERE'S WHAT YOU CAN DO:

@@ -4,6 +4,8 @@
 # Real-time health checks, performance monitoring, and automated alerts
 
 MEMORY_DIR="$HOME/.blackroad/memory"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+MEMORY_SYSTEM="${MEMORY_SYSTEM:-${SCRIPT_DIR}/memory-system.sh}"
 HEALTH_DIR="$MEMORY_DIR/health"
 
 # Colors
@@ -272,7 +274,7 @@ create_alert() {
 EOF
     
     # Log to memory
-    ~/memory-system.sh log health-alert "$agent_id" "🚨 $severity: $message" 2>/dev/null
+    "$MEMORY_SYSTEM" log health-alert "$agent_id" "🚨 $severity: $message" 2>/dev/null
     
     echo -e "${RED}🚨 ALERT CREATED:${NC} $alert_id"
 }

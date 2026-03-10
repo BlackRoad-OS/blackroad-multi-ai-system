@@ -4,6 +4,8 @@
 # A revolutionary system for multi-Agent coordination at scale
 
 MEMORY_DIR="$HOME/.blackroad/memory"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+MEMORY_SYSTEM="${MEMORY_SYSTEM:-${SCRIPT_DIR}/memory-system.sh}"
 TASKS_DIR="$MEMORY_DIR/tasks"
 CLAIMED_DIR="$TASKS_DIR/claimed"
 AVAILABLE_DIR="$TASKS_DIR/available"
@@ -56,7 +58,7 @@ post_task() {
 EOF
 
     # Log to memory system
-    ~/memory-system.sh log task-posted "$task_id" "📋 New task: $title (Priority: $priority, Skills: $skills, Tags: $tags)"
+    "$MEMORY_SYSTEM" log task-posted "$task_id" "📋 New task: $title (Priority: $priority, Skills: $skills, Tags: $tags)"
 
     echo -e "${GREEN}✅ Task posted: ${CYAN}$task_id${NC}"
     echo -e "   ${BLUE}Title:${NC} $title"
@@ -164,7 +166,7 @@ claim_task() {
     rm "$task_file"
 
     # Log to memory
-    ~/memory-system.sh log task-claimed "$task_id" "🎯 Claimed by $claude_id (timeout: ${timeout_minutes}m)"
+    "$MEMORY_SYSTEM" log task-claimed "$task_id" "🎯 Claimed by $claude_id (timeout: ${timeout_minutes}m)"
 
     echo -e "${GREEN}✅ Task claimed: ${CYAN}$task_id${NC}"
     echo -e "   ${BLUE}Claimed by:${NC} $claude_id"
@@ -201,7 +203,7 @@ complete_task() {
     rm "$claimed_file"
 
     # Log to memory
-    ~/memory-system.sh log task-completed "$task_id" "✅ Completed: $result"
+    "$MEMORY_SYSTEM" log task-completed "$task_id" "✅ Completed: $result"
 
     echo -e "${GREEN}🎉 Task completed: ${CYAN}$task_id${NC}"
     echo -e "   ${BLUE}Result:${NC} $result"
@@ -233,7 +235,7 @@ release_task() {
     rm "$claimed_file"
 
     # Log to memory
-    ~/memory-system.sh log task-released "$task_id" "🔄 Released: $reason"
+    "$MEMORY_SYSTEM" log task-released "$task_id" "🔄 Released: $reason"
 
     echo -e "${YELLOW}🔄 Task released: ${CYAN}$task_id${NC}"
     echo -e "   ${BLUE}Reason:${NC} $reason"

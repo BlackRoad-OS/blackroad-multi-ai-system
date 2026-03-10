@@ -5,6 +5,8 @@
 # Perfect for sales funnels, development pipelines, customer journeys
 
 MEMORY_DIR="$HOME/.blackroad/memory"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+MEMORY_SYSTEM="${MEMORY_SYSTEM:-${SCRIPT_DIR}/memory-system.sh}"
 FUNNEL_DIR="$MEMORY_DIR/funnels"
 
 # Colors
@@ -96,7 +98,7 @@ EOF
     mv "${config_file}.tmp" "$config_file"
     
     # Log to memory
-    ~/memory-system.sh log "funnel-$funnel_name" "$item_id" "🔽 Added to funnel: $item_name (stage: $first_stage)" 2>/dev/null
+    "$MEMORY_SYSTEM" log "funnel-$funnel_name" "$item_id" "🔽 Added to funnel: $item_name (stage: $first_stage)" 2>/dev/null
     
     echo -e "${GREEN}✅ Added to funnel:${NC} ${CYAN}$item_id${NC}"
     echo -e "   ${BLUE}Name:${NC} $item_name"
@@ -188,7 +190,7 @@ EOF
     fi
     
     # Log to memory
-    ~/memory-system.sh log "funnel-$funnel_name" "$item_id" "➡️ Advanced: $current_stage → $next_stage ($item_name)" 2>/dev/null
+    "$MEMORY_SYSTEM" log "funnel-$funnel_name" "$item_id" "➡️ Advanced: $current_stage → $next_stage ($item_name)" 2>/dev/null
     
     echo -e "${GREEN}✅ Advanced:${NC} ${CYAN}$item_id${NC}"
     echo -e "   ${BLUE}From:${NC} $current_stage"

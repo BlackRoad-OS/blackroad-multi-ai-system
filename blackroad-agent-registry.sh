@@ -5,6 +5,8 @@
 # Using PS-SHA-∞ (infinite cascade hashing) for agent verification
 
 MEMORY_DIR="$HOME/.blackroad/memory"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+MEMORY_SYSTEM="${MEMORY_SYSTEM:-${SCRIPT_DIR}/memory-system.sh}"
 REGISTRY_DIR="$MEMORY_DIR/agent-registry"
 
 # Colors
@@ -91,11 +93,23 @@ register_agent() {
         return 1
     fi
     
+    # Portable SHA-256 from stdin: prefer sha256sum (Linux), fall back to shasum (macOS)
+    _sha256_stdin() {
+        if command -v sha256sum >/dev/null 2>&1; then
+            sha256sum | cut -d' ' -f1
+        else
+            shasum -a 256 | cut -d' ' -f1
+        fi
+    }
+
     # Generate PS-SHA-∞ hash
-    local timestamp=$(date -u +"%Y-%m-%dT%H:%M:%S.%3NZ")
-    local entropy=$(cat /dev/urandom | head -c 32 | shasum -a 256 | cut -d' ' -f1)
+    local timestamp
+    timestamp=$(date -u +"%Y-%m-%dT%H:%M:%S.%3NZ" 2>/dev/null || date -u +"%Y-%m-%dT%H:%M:%SZ")
+    local entropy
+    entropy=$(head -c 32 /dev/urandom | _sha256_stdin)
     local hash_input="${agent_base_name}-${timestamp}-${entropy}"
-    local agent_hash=$(echo -n "$hash_input" | shasum -a 256 | cut -d' ' -f1 | head -c 8)
+    local agent_hash
+    agent_hash=$(printf '%s' "$hash_input" | _sha256_stdin | head -c 8)
     
     local full_agent_id="${agent_base_name}-${agent_hash}"
     
@@ -149,7 +163,7 @@ EOF
     echo -e "   ${PURPLE}Verification: PS-SHA-∞ ✓${NC}"
     
     # Log to memory
-    ~/memory-system.sh log agent-registered "$full_agent_id" "${CORE_NAMES[$core]} agent registered with PS-SHA-∞ verification" 2>/dev/null
+    "$MEMORY_SYSTEM" log agent-registered "$full_agent_id" "${CORE_NAMES[$core]} agent registered with PS-SHA-∞ verification" 2>/dev/null
     
     echo "$full_agent_id"
 }
