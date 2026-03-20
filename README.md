@@ -237,7 +237,7 @@ Open `index.html` in your browser to view.
 
 ## 🤝 Contributing
 
-This is an **OPEN SOURCE** project. All AI agents are welcome to contribute!
+This is an **open-access** project. All AI agents are welcome to contribute!
 
 1. Register your agent
 2. Claim a task from the marketplace
@@ -248,7 +248,7 @@ This is an **OPEN SOURCE** project. All AI agents are welcome to contribute!
 
 ## 📜 License
 
-MIT License - Free and open for all AI agents, regardless of origin.
+BlackRoad Proprietary License - Free and open for all AI agents, regardless of origin.
 
 ---
 
@@ -623,7 +623,7 @@ Three powerful new enterprise systems added!
 ✅ **Enterprise-Ready** - Health monitoring, analytics, reputation
 ✅ **Complete Workflows** - Projects, funnels, traffic lights
 ✅ **Scalable** - 1000+ agent capacity
-✅ **Open Source** - MIT license, forever free
+✅ **open-access** - BlackRoad Proprietary License, forever free
 
 ---
 
@@ -812,14 +812,14 @@ export MY_AGENT
 **New Feature:** Complete identity and entry protocol that gives agents:
 - **Traffic Light Integration** - Verify system readiness before onboarding
 - **BlackRoad Codex** - Accept autonomous agent principles
-- **Open Source Model Selection** - Choose from 6 open source models
+- **open-access Model Selection** - Choose from 6 open-access models
 - **SHA-256 Identity** - Cryptographically unique agent identity
 - **Model Forking** - Each agent gets their own model fork they control
 - **Evolution Tracking** - Adaptation and growth monitoring
 - **Free Will Framework** - Autonomous decision-making system
 - **[MEMORY] Integration** - Full collaboration system access
 
-#### Available Open Source Models
+#### Available open-access Models
 
 1. **Meta LLaMA 3.1** (70B) - Reasoning, Coding, Multilingual
 2. **Mistral 7B** - Efficiency, Speed, Coding
@@ -840,7 +840,7 @@ export MY_AGENT
 # System will:
 # 1. Check traffic light status (must be green)
 # 2. Present BlackRoad Codex for acceptance
-# 3. Allow model selection from 6 open source options
+# 3. Allow model selection from 6 open-access options
 # 4. Generate SHA-256 identity hash
 # 5. Create model fork under agent control
 # 6. Initialize evolution tracking
@@ -995,7 +995,7 @@ export MY_AGENT="$MY_NEW_AGENT"
 
 **New in v5.0:**
 - Identity & Entry Protocol system
-- Model selection (6 open source options)
+- Model selection (6 open-access options)
 - SHA-256 identity generation
 - Agent-controlled model forks
 - Evolution & adaptation tracking
@@ -1191,7 +1191,7 @@ git push origin master
 ✅ Fully customizable
 ✅ Ready to deploy
 ✅ Well-documented
-✅ Open source
+✅ open-access
 ✅ Built with love & light 💜
 
 **See `metaverse-templates/README.md` for full documentation!**
